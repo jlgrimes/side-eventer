@@ -1,17 +1,15 @@
 import { useRouter } from 'next/router';
 import { Magic } from 'magic-sdk';
+import { Button, Input } from '@chakra-ui/react';
+import { useFormik } from 'formik';
 
 export default function Login() {
   const router = useRouter();
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const { elements } = event.target;
-
+  const handleSubmit = async event => {
     // the Magic code
     const did = await new Magic(
       process.env.NEXT_PUBLIC_MAGIC_PUB_KEY ?? ''
-    ).auth.loginWithMagicLink({ email: elements.email.value });
+    ).auth.loginWithMagicLink({ email: event.email });
 
     // Once we have the did from magic, login with our own API
     const authRequest = await fetch('/api/login', {
@@ -29,11 +27,21 @@ export default function Login() {
     }
   };
 
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+    },
+    onSubmit: handleSubmit,
+  });
+
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor='email'>Email</label>
-      <input name='email' type='email' />
-      <button>Log in</button>
+    <form onSubmit={formik.handleSubmit}>
+      <Input
+        name='email'
+        onChange={formik.handleChange}
+        value={formik.values.email}
+      />
+      <Button type='submit'>Log in</Button>
     </form>
   );
 }
