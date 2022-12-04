@@ -5,11 +5,12 @@ import { useFormik } from 'formik';
 
 export default function Login() {
   const router = useRouter();
-  const handleSubmit = async event => {
+
+  const handleSubmit = async (values: { email: string }) => {
     // the Magic code
     const did = await new Magic(
       process.env.NEXT_PUBLIC_MAGIC_PUB_KEY ?? ''
-    ).auth.loginWithMagicLink({ email: event.email });
+    ).auth.loginWithMagicLink({ email: values.email });
 
     // Once we have the did from magic, login with our own API
     const authRequest = await fetch('/api/login', {

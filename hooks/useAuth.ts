@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 
-function fetcher(route) {
+function fetcher(route: string) {
   /* our token cookie gets sent with this request */
   return fetch(route)
     .then((r) => r.ok && r.json())
